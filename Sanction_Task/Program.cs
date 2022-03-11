@@ -58,7 +58,7 @@ namespace Sanction_Task
         public static void ReadDetails(string link)
         {
             string pageSourceForDetails;
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < postLinksForDetail.Count; i++)
             {
                 HttpWebRequest requestForDetail = (HttpWebRequest)WebRequest.Create(link + postLinksForDetail[i].ToString()); //linki detay linki ile birleştirdim.
                 requestForDetail.Timeout = 3000;
@@ -119,7 +119,5 @@ namespace Sanction_Task
             sw.Close();
             fs.Close();
         }
-
     }
-    
 }
