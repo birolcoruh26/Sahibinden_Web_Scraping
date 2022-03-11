@@ -13,7 +13,7 @@ namespace Sanction_Task
             string pagesource;
             List<string> postLinksForDetail = new List<string>();
             List<string> postNames = new List<string>();
-            List<int> postPrices = new List<int>();
+            List<string> postPrices = new List<string>();
             HtmlAgilityPack.HtmlDocument html;
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://www.sahibinden.com/");
             WebResponse response = request.GetResponse();
@@ -35,10 +35,25 @@ namespace Sanction_Task
                    
                 }
             }
-            //for (int i = 0; i < postLinksForDetail.Count; i++)
-            //{
-            //    HttpWebRequest requestForDetail = (HttpWebRequest)WebRequest.Create($"https://www.sahibinden.com/ + {postLinksForDetail[i]}");
-            //}
+            for (int i = 0; i < postLinksForDetail.Count; i++)
+            {
+                HttpWebRequest requestForDetail = (HttpWebRequest)WebRequest.Create($"https://www.sahibinden.com" + postLinksForDetail[i].ToString());
+                WebResponse responseForDetail = requestForDetail.GetResponse();
+                using (Stream responseForDetailStream = responseForDetail.GetResponseStream())
+                {
+                    StreamReader reader = new StreamReader(responseForDetailStream, encoding: Encoding.UTF8);
+                    pagesource = reader.ReadToEnd();
+                }
+                using (WebClient clientForDetail = new WebClient())
+                {
+                    html = new HtmlAgilityPack.HtmlDocument();
+                    html.LoadHtml(pagesource);
+                    var nodesForDetail = html.DocumentNode.SelectSingleNode(@"//*[@id=""favoriteClassifiedPrice""]"); //*[@id="favoriteClassifiedPrice"]
+                    postPrices.Add(nodesForDetail.Attributes["value"].Value);
+
+                }
+            }
+
             Console.ReadLine();
 
 
