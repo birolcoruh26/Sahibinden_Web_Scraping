@@ -9,12 +9,14 @@ namespace Sanction_Task
 {
     internal class Program
     {
-        static Dictionary<string, string> prime = new Dictionary<string, string>();
+
+        static Dictionary<string, string> combinedList = new Dictionary<string, string>();
         static HtmlAgilityPack.HtmlDocument? html;
         static List<string> postLinksForDetail = new List<string>();
         static List<string> postNames = new List<string>();
         static List<string> postPrices = new List<string>();
-        static List<int> pricesForMeans = new List<int>();
+        static List<int> pricesForAverage = new List<int>();
+
         static void Main(string[] args)
         {
             ReadDetailLinks("https://www.sahibinden.com");
@@ -36,8 +38,8 @@ namespace Sanction_Task
             }
             using (WebClient client = new WebClient())
             {
-                client.Headers.Add("user-agent", Guid.NewGuid().ToString());
-                client.Proxy = new WebProxy("89.43.31.134");
+                //client.Headers.Add("user-agent", Guid.NewGuid().ToString());
+                //client.Proxy = new WebProxy("89.43.31.134");
                 html = new HtmlAgilityPack.HtmlDocument();
                 html.LoadHtml(pageSource);
                 HtmlNode[] nodes = html.DocumentNode.SelectNodes(@"//*[@id=""container""]/ div[3]/div/div[3]/div[3]/ul/li/a").ToArray();
@@ -70,8 +72,8 @@ namespace Sanction_Task
                 }
                 using (WebClient clientForDetail = new WebClient())
                 {
-                    clientForDetail.Headers.Add("user-agent", Guid.NewGuid().ToString());
-                    clientForDetail.Proxy = new WebProxy("89.43.31.134");
+                    //clientForDetail.Headers.Add("user-agent", Guid.NewGuid().ToString());
+                    //clientForDetail.Proxy = new WebProxy("89.43.31.134");
                     html = new HtmlAgilityPack.HtmlDocument();
                     html.LoadHtml(pageSourceForDetails);
                     var nodesForDetail = html.DocumentNode.SelectSingleNode(@"//*[@id=""favoriteClassifiedPrice""]"); //*[@id="favoriteClassifiedPrice"]
@@ -96,26 +98,26 @@ namespace Sanction_Task
             for (int i = 0; i < postPrices.Count; i++)
             {
                 Console.WriteLine(postNames[i] + ":" + postPrices[i]);
-                prime.Add(postNames[i], postPrices[i]);
+                combinedList.Add(postNames[i], postPrices[i]);
             }
             if (postPrices.Count > 0)
             {
                 foreach (var item in postPrices)
                 {
-                    pricesForMeans.Add(Convert.ToInt32(item));
+                    pricesForAverage.Add(Convert.ToInt32(item));
                 }
             }
-            Console.WriteLine("mean:"+pricesForMeans.Average().ToString());
+            Console.WriteLine("Average:"+pricesForAverage.Average().ToString() + "TL");
         }
         public static void SaveToFile(string path)
         {
             FileStream fs = File.Create(path + "\\" + "sahibinden.txt");
             StreamWriter sw = new StreamWriter(fs);
-            foreach (var item in prime)
+            foreach (var item in combinedList)
             {
                 sw.WriteLine(item.Key.Trim() + ":" + item.Value.Trim());
             }
-            sw.WriteLine("mean:" + pricesForMeans.Average().ToString()); //ortalama
+            sw.WriteLine("Average:" + pricesForAverage.Average().ToString() + "TL"); 
             sw.Close();
             fs.Close();
         }
