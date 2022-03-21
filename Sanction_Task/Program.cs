@@ -29,7 +29,7 @@ namespace Sanction_Task
             string pageSource;
 
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(link);
-            request.Timeout = 3000;
+            request.Timeout = 30000; //30 saniye arayla istek yolluyoruz 
             WebResponse response = request.GetResponse();
             using (Stream responseStream = response.GetResponseStream())
             {
@@ -39,7 +39,7 @@ namespace Sanction_Task
             using (WebClient client = new WebClient())
             {
                 //client.Headers.Add("user-agent", Guid.NewGuid().ToString());
-                //client.Proxy = new WebProxy("89.43.31.134");
+                clientForDetail.Proxy = new WebProxy("89.43.31.134:8083");
                 html = new HtmlAgilityPack.HtmlDocument();
                 html.LoadHtml(pageSource);
                 HtmlNode[] nodes = html.DocumentNode.SelectNodes(@"//*[@id=""container""]/ div[3]/div/div[3]/div[3]/ul/li/a").ToArray();
@@ -63,7 +63,7 @@ namespace Sanction_Task
             for (int i = 0; i < postLinksForDetail.Count; i++)
             {
                 HttpWebRequest requestForDetail = (HttpWebRequest)WebRequest.Create(link + postLinksForDetail[i].ToString()); //linki detay linki ile birleştirdim.
-                requestForDetail.Timeout = 3000;
+                requestForDetail.Timeout = 30000;
                 WebResponse responseForDetail = requestForDetail.GetResponse();
                 using (Stream responseForDetailStream = responseForDetail.GetResponseStream())
                 {
@@ -73,7 +73,7 @@ namespace Sanction_Task
                 using (WebClient clientForDetail = new WebClient())
                 {
                     //clientForDetail.Headers.Add("user-agent", Guid.NewGuid().ToString());
-                    //clientForDetail.Proxy = new WebProxy("89.43.31.134");
+                    clientForDetail.Proxy = new WebProxy("89.43.31.134:8083");
                     html = new HtmlAgilityPack.HtmlDocument();
                     html.LoadHtml(pageSourceForDetails);
                     var nodesForDetail = html.DocumentNode.SelectSingleNode(@"//*[@id=""favoriteClassifiedPrice""]"); //*[@id="favoriteClassifiedPrice"]
